@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+        #text {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: blueviolet;
+        }
+        #myButton {
+            position: absolute;
+            top: 50px; /* Puts it below the #text */
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #6c5ce7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #myButton:hover {
+            background-color: #a29bfe;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas1"></canvas>
+    <div id="text">Triangles: 0</div>
+    <button id="myButton">Create BVH</button>
+
+    <script src="Library.js"></script>
+    <script src="loop.js"></script>
+</body>
+</html>
