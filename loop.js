@@ -79,11 +79,15 @@ function calc_BoundingBox(tri_arr){
 
 }
 
-let tri_arr=[];
+let tri_arr=[];                 //holds the triangles
 
 let mousePoint = new Vec2d(0,0);
 
-let Bounding_Volumes_array=[];
+let Bounding_Volumes_array=[]; //holds the bounding volumes
+
+let collision_checks =0;       //for display purposes
+
+let bounding_box_checks = 0;   //for display purposes
 
 function splitBox_vertical(vertices) {     //GPT :)
     // Find min and max x-coordinates
@@ -271,6 +275,32 @@ function recursive_divide(root,threshold=6)
     }
 }
 
+function recursive_search(root)     //has access to the renderer
+{
+    if(root.child.length)
+    {
+        if(pointChecker_shape(mousePoint,root.child[0].value.vertices))
+            recursive_search(root.child[0].value);
+
+        if(pointChecker_shape(mousePoint,root.child[1].value.vertices))
+            recursive_search(root.child[1].value);
+    }
+
+    else
+    {
+        for(let i=0;i<root.items.length;i++)
+        {
+            if(pointChecker_shape(mousePoint,root.items[i].transformedVertices))
+            {
+                FillTriangle(root.items[i].transformedVertices[0],root.items[i].transformedVertices[1],root.items[i].transformedVertices[2],"yellow","yellow");
+                for(let k=0;k<3;k++)
+                    FillCircle(root.items[i].transformedVertices[k],3,"red");
+            }
+        }
+    }
+
+}
+
 //for every mouse click
 document.addEventListener("click",(event)=>{
 
@@ -360,63 +390,29 @@ function Loop(){
                     {
                         DrawTriangle(tri_arr[i].transformedVertices[0] ,tri_arr[i].transformedVertices[1], tri_arr[i].transformedVertices[2],"black");
                         for(let k=0;k<3;k++)
-                            FillCircle(tri_arr[i].transformedVertices[k],5,"red");
+                            FillCircle(tri_arr[i].transformedVertices[k],3,"red");
                     }
                 }
 
 
 
       
-         //Draw the bounding volumes
-
-            //check collision with bounding volume
+         //Draw the bounding volumes if there are any 
             if(Bounding_Volumes_array.length){
 
                 for(let i =0;i<Bounding_Volumes_array.length;i++) {
-                    if(pointChecker_shape(mousePoint,Bounding_Volumes_array[i].vertices))
-                        {
-                            DrawPolygon3(Bounding_Volumes_array[i].vertices,"yellow"); //highlight the bounding box
-                            Bounding_Volumes_array[i].name =`Box-${i}`;
-                            
-                            if(Bounding_Volumes_array[i].items){    //set all the contained triangles to yellow
-                                for(let j =0; j<Bounding_Volumes_array[i].items.length;j++)
-                                {
-                                    FillTriangle(Bounding_Volumes_array[i].items[j].transformedVertices[0],Bounding_Volumes_array[i].items[j].transformedVertices[1],Bounding_Volumes_array[i].items[j].transformedVertices[2],"yellow","yellow");
-                                    for(let k=0;k<3;k++)
-                                        FillCircle(Bounding_Volumes_array[i].items[j].transformedVertices[k],5,"red");
-                                }
-                            }
-                        }
-                    else
-                        {
-                            DrawPolygon3(Bounding_Volumes_array[i].vertices,"red");
-                            if(Bounding_Volumes_array[i].items){    //set all the contained triangles to black
-                                for(let j =0; j<Bounding_Volumes_array[i].items.length;j++)
-                                {
-                                    DrawTriangle(Bounding_Volumes_array[i].items[j].transformedVertices[0],Bounding_Volumes_array[i].items[j].transformedVertices[1],Bounding_Volumes_array[i].items[j].transformedVertices[2],"black");
-                                    for(let k=0;k<3;k++)
-                                        FillCircle(Bounding_Volumes_array[i].items[j].transformedVertices[k],5,"red");
-                                }
-                            }
-
-                        }
+                    
+                    DrawPolygon3(Bounding_Volumes_array[i].vertices,"red");
+                          
                 }  
             }
 
-            
-
-              
-
-
-            
-      
-       
-            
         
+            //search through the Bounding Volumes and savor the sweet performance benifits
+            if(Bounding_Volumes_array.length)
+                recursive_search(Bounding_Volumes_array[0]);
 
-      
-    
-
+           
      
     }
 
